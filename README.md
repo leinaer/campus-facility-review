@@ -357,23 +357,6 @@ server {
 
 ---
 
-## 安全提示
-
-⚠️ **重要**：请勿将包含敏感信息的配置文件上传到代码仓库。
-
-以下文件已被 `.gitignore` 忽略：
-
-- `.env`
-- `.env.local`
-- `project.private.config.json`
-
-提交代码前请确认这些文件未被跟踪：
-
-```bash
-git status
-```
-
----
 
 ## 项目功能
 
