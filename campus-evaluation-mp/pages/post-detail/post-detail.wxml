@@ -1,0 +1,159 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:else class="post-container">
+    <view class="post-card">
+      <view class="user-info" bindtap="goToUserProfile" data-userid="{{post.userId}}">
+        <image class="avatar" src="{{post.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load></image>
+        <view class="user-detail">
+          <text class="nickname">{{post.userNickname || '匿名用户'}}</text>
+          <text class="time">{{post.createTime}}</text>
+        </view>
+        <view class="mood-badge">{{post.mood === 'happy' ? '😊' : post.mood === 'sad' ? '😢' : post.mood === 'angry' ? '😡' : '😐'}}</view>
+      </view>
+
+      <view wx:if="{{post.images && post.images.length > 0}}" class="image-grid {{post.images.length === 1 ? 'single-img' : post.images.length === 2 ? 'double-img' : post.images.length === 3 ? 'triple-img' : post.images.length === 4 ? 'quad-img' : 'multi-img'}}">
+        <image 
+          wx:for="{{post.images}}" 
+          wx:key="index"
+          class="post-image"
+          src="{{item}}" 
+          mode="aspectFill"
+          bindtap="previewImage"
+          data-index="{{index}}"
+        ></image>
+      </view>
+
+      <view class="post-title" wx:if="{{post.title}}">
+        <text class="title-text">{{post.title}}</text>
+      </view>
+
+      <view class="post-content">
+        <text class="content-text">{{post.content}}</text>
+      </view>
+
+      <scroll-view wx:if="{{(post.topics && post.topics.length > 0) || (post.tags && post.tags.length > 0)}}" class="tags-scroll" scroll-x="true">
+        <view class="tags-container">
+          <text 
+            wx:for="{{post.topics}}" 
+            wx:key="index"
+            class="topic-tag"
+            bindtap="goToTopic"
+            data-topicid="{{item.topicId}}"
+          >
+            #{{item.name}}
+          </text>
+          <text 
+            wx:for="{{post.tags}}" 
+            wx:key="index"
+            class="tag"
+          >
+            {{item}}
+          </text>
+        </view>
+      </scroll-view>
+
+      <view class="interaction-bar">
+        <view class="action-btn {{post.isLiked ? 'active' : ''}}" bindtap="onLike">
+          <image class="action-icon" src="{{post.isLiked ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}" mode="aspectFit" lazy-load />
+          <text class="action-count">{{post.likeCount || 0}}</text>
+        </view>
+        <view class="action-btn" bindtap="onComment">
+          <image class="action-icon" src="/images/icon-comment.svg" mode="aspectFit" lazy-load />
+          <text class="action-count">{{post.commentCount || 0}}</text>
+        </view>
+        <view class="action-btn {{post.isCollected ? 'active' : ''}}" bindtap="onCollect">
+          <image class="action-icon" src="{{post.isCollected ? '/images/icon-collect-filled.svg' : '/images/icon-collect.svg'}}" mode="aspectFit" lazy-load />
+          <text class="action-count">{{post.collectCount || 0}}</text>
+        </view>
+        <view class="action-btn" open-type="share">
+          <image class="action-icon" src="/images/icon-share.svg" mode="aspectFit" lazy-load />
+        </view>
+      </view>
+    </view>
+
+    <view class="comment-section">
+      <view class="section-header">
+        <text class="section-title">评论</text>
+        <text class="comment-count">({{comments.length}})</text>
+        <view class="sort-options">
+          <view class="sort-item {{commentSortBy === 'time' ? 'active' : ''}}" catchtap="onCommentSortChange" data-sort="time">
+            <text>按时间</text>
+          </view>
+          <view class="sort-item {{commentSortBy === 'hot' ? 'active' : ''}}" catchtap="onCommentSortChange" data-sort="hot">
+            <text>按热度</text>
+          </view>
+        </view>
+      </view>
+      
+      <view wx:if="{{comments.length === 0}}" class="empty-comments">
+        <view class="empty-icon">💬</view>
+        <text class="empty-text">暂无评论，快来抢沙发~</text>
+      </view>
+
+      <view wx:else class="comment-list">
+        <view wx:for="{{comments}}" wx:key="commentId" class="comment-item">
+          <view class="comment-header">
+            <image class="comment-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load></image>
+            <view class="comment-info">
+              <text class="comment-nickname">{{item.userNickname || '匿名用户'}}</text>
+              <text class="comment-time">{{item.createTime}}</text>
+            </view>
+            <view class="comment-more" catchtap="onShowCommentMore" data-comment-id="{{item.commentId}}" data-user-id="{{item.userId}}">
+              <text>⋮</text>
+            </view>
+          </view>
+          
+          <view class="comment-body">
+            <text wx:if="{{item.replyToUserName}}" class="reply-to">回复 @{{item.replyToUserName}}：</text>
+            <text class="comment-content">{{item.content}}</text>
+          </view>
+
+          <view class="comment-actions">
+            <view class="action-item" bindtap="onReply" data-comment-id="{{item.commentId}}" data-user-id="{{item.userId}}" data-user-name="{{item.userNickname}}">
+              <text>💬 回复</text>
+            </view>
+            <view class="action-item like-btn {{item.isLiked ? 'liked' : ''}}" bindtap="onCommentLike" data-comment-id="{{item.commentId}}">
+              <text>{{item.isLiked ? '❤️' : '🤍'}} {{item.likeCount || 0}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{hasMore}}" class="load-more" bindtap="loadMoreComments">
+          <text>加载更多评论</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showCommentInput}}" class="comment-input-overlay" bindtap="onCloseCommentInput">
+    <view class="comment-input-box" catchtap="">
+      <view class="input-header">
+        <text wx:if="{{replyToUserName}}" class="reply-hint">回复 @{{replyToUserName}}</text>
+        <text wx:else class="reply-hint">发表评论</text>
+        <text class="close-btn" bindtap="onCloseCommentInput">×</text>
+      </view>
+      <textarea 
+        class="comment-textarea" 
+        placeholder="{{replyToUserName ? '回复 ' + replyToUserName : '说点什么...'}}"
+        value="{{commentContent}}"
+        bindinput="onCommentInput"
+        focus="{{true}}"
+        maxlength="500"
+      ></textarea>
+      <view class="input-footer">
+        <text class="char-count">{{commentContent.length}}/500</text>
+        <button 
+          class="submit-btn {{canSubmit ? 'active' : ''}}" 
+          bindtap="submitComment"
+          disabled="{{!canSubmit}}"
+        >
+          发布
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

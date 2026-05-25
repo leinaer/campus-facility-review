@@ -1,0 +1,8 @@
+<svg width="81" height="81" viewBox="0 0 81 81" xmlns="http://www.w3.org/2000/svg">
+  <!-- 外圈圆环 -->
+  <circle cx="40.5" cy="40.5" r="26" fill="none" stroke="#999999" stroke-width="4"/>
+  <!-- 指南针指针 -->
+  <polygon points="40.5,18 48,40.5 40.5,63 33,40.5" fill="#999999"/>
+  <!-- 中心点 -->
+  <circle cx="40.5" cy="40.5" r="5" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,91 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:else class="content-area">
+    <!-- 话题信息卡片 -->
+    <view class="topic-header">
+      <view class="topic-info">
+        <text class="topic-icon">{{topic.icon || '🏷️'}}</text>
+        <view class="topic-detail">
+          <text class="topic-name">#{{topic.name}}</text>
+          <text class="topic-desc">{{topic.description || '暂无描述'}}</text>
+          <view class="topic-stats">
+            <text class="stat-item">{{topic.postCount || 0}} 帖子</text>
+            <text class="stat-divider">·</text>
+            <text class="stat-item">{{topic.followCount || 0}} 关注</text>
+          </view>
+        </view>
+      </view>
+      
+      <button 
+        class="follow-btn {{isFollowed ? 'followed' : ''}}"
+        bindtap="onFollow"
+      >
+        {{isFollowed ? '已关注' : '+ 关注'}}
+      </button>
+    </view>
+
+    <!-- 帖子列表 -->
+    <view class="posts-section">
+      <view class="section-title">最新帖子</view>
+
+      <view wx:if="{{posts.length === 0 && !loading}}" class="empty-posts">
+        <text class="empty-icon">📝</text>
+        <text class="empty-text">该话题下还没有帖子</text>
+        <text class="empty-hint">快来发布第一条吧~</text>
+      </view>
+
+      <view wx:else class="post-list">
+        <view wx:for="{{posts}}" wx:key="postId" class="post-card">
+          <view class="post-header" bindtap="goToUserProfile" data-userid="{{item.userId}}">
+            <image class="avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load></image>
+            <view class="user-info">
+              <text class="nickname">{{item.userNickname || '匿名用户'}}</text>
+              <text class="time">{{item.createTime}}</text>
+            </view>
+          </view>
+
+          <view class="post-body" bindtap="goToPostDetail" data-id="{{item.postId}}">
+            <text class="content">{{item.content}}</text>
+            
+            <view wx:if="{{item.images && item.images.length > 0}}" class="post-images">
+              <image 
+                wx:for="{{item.images}}" 
+                wx:for-item="img"
+                wx:key="index"
+                class="post-image"
+                src="{{img}}" 
+                mode="aspectFill"
+              ></image>
+            </view>
+
+            <view wx:if="{{item.tags && item.tags.length > 0}}" class="post-tags">
+              <text wx:for="{{item.tags}}" wx:key="index" class="tag">#{{item}}</text>
+            </view>
+          </view>
+
+          <view class="post-footer">
+            <view class="stat-item">
+              <text class="icon">❤️</text>
+              <text class="count">{{item.likeCount || 0}}</text>
+            </view>
+            <view class="stat-item">
+              <text class="icon">💬</text>
+              <text class="count">{{item.commentCount || 0}}</text>
+            </view>
+            <view class="stat-item">
+              <text class="icon">⭐</text>
+              <text class="count">{{item.collectCount || 0}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{!hasMore && posts.length > 0}}" class="no-more">
+          <text>没有更多了</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

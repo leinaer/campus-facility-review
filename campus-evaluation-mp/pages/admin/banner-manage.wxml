@@ -1,0 +1,166 @@
+<!--pages/admin/banner-manage.wxml-->
+<view class="banner-manage-container">
+  <!-- 顶部操作栏 -->
+  <view class="action-bar">
+    <button class="add-btn" bindtap="showAddDialog">
+      <text class="btn-icon">➕</text>
+      <text class="btn-text">添加轮播图</text>
+    </button>
+  </view>
+
+  <!-- Banner 列表 -->
+  <view class="banner-list" wx:if="{{bannerList.length > 0}}">
+    <view class="banner-item" wx:for="{{bannerList}}" wx:key="bannerId">
+      <view class="banner-preview">
+        <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill" lazy-load />
+        <view class="status-badge {{item.status === 1 ? 'active' : 'inactive'}}">
+          {{item.status === 1 ? '已上架' : '已下架'}}
+        </view>
+      </view>
+      
+      <view class="banner-info">
+        <view class="banner-title">{{item.title || '未设置标题'}}</view>
+        <view class="banner-meta">
+          <text class="meta-item">排序：{{item.sortOrder || 0}}</text>
+          <text class="meta-item" wx:if="{{item.linkUrl}}">有链接</text>
+          <text class="meta-item" wx:else>无链接</text>
+        </view>
+      </view>
+
+      <view class="banner-actions">
+        <button 
+          class="action-btn toggle-btn {{item.status === 1 ? 'offline' : 'online'}}" 
+          bindtap="toggleStatus" 
+          data-id="{{item.bannerId}}" 
+          data-status="{{item.status}}"
+        >
+          {{item.status === 1 ? '下架' : '上架'}}
+        </button>
+        <button class="action-btn edit-btn" bindtap="showEditDialog" data-item="{{item}}">编辑</button>
+        <button class="action-btn delete-btn" bindtap="deleteBanner" data-id="{{item.bannerId}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{bannerList.length === 0 && !loading}}">
+    <text class="empty-icon">🖼️</text>
+    <text class="empty-text">暂无轮播图</text>
+    <text class="empty-tip">点击右上角添加按钮创建</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 添加/编辑对话框 -->
+  <view class="dialog-mask" wx:if="{{showDialog}}" bindtap="hideDialog">
+    <view class="dialog-content" catchtap="stopPropagation">
+      <view class="dialog-header">
+        <text class="dialog-title">{{isEdit ? '编辑轮播图' : '添加轮播图'}}</text>
+        <text class="dialog-close" bindtap="hideDialog">✕</text>
+      </view>
+
+      <view class="dialog-body">
+        <!-- 标题 -->
+        <view class="form-item">
+          <text class="form-label">标题（可选）</text>
+          <input 
+            class="form-input" 
+            placeholder="请输入标题" 
+            value="{{form.title}}"
+            bindinput="onTitleInput"
+          />
+        </view>
+
+        <!-- 图片URL -->
+        <view class="form-item required">
+          <text class="form-label">图片URL</text>
+          <input 
+            class="form-input" 
+            placeholder="请输入图片URL或使用示例图片" 
+            value="{{form.imageUrl}}"
+            bindinput="onImageUrlInput"
+          />
+          <view class="image-preview" wx:if="{{form.imageUrl}}">
+            <image class="preview-img" src="{{form.imageUrl}}" mode="aspectFill" binderror="onImageError" lazy-load />
+          </view>
+        </view>
+
+        <!-- 跳转链接 -->
+        <view class="form-item">
+          <text class="form-label">跳转链接（可选）</text>
+          <input 
+            class="form-input" 
+            placeholder="/pages/xxx/xxx 或留空" 
+            value="{{form.linkUrl}}"
+            bindinput="onLinkUrlInput"
+          />
+          <text class="form-hint">留空则点击无反应</text>
+        </view>
+
+        <!-- 排序 -->
+        <view class="form-item">
+          <text class="form-label">排序</text>
+          <input 
+            class="form-input" 
+            type="number"
+            placeholder="数字越小越靠前，默认0" 
+            value="{{form.sortOrder}}"
+            bindinput="onSortOrderInput"
+          />
+        </view>
+
+        <!-- 状态 -->
+        <view class="form-item">
+          <text class="form-label">状态</text>
+          <view class="radio-group">
+            <view class="radio-item {{form.status === 1 ? 'checked' : ''}}" bindtap="setStatus" data-status="1">
+              <view class="radio-icon"></view>
+              <text>立即上架</text>
+            </view>
+            <view class="radio-item {{form.status === 0 ? 'checked' : ''}}" bindtap="setStatus" data-status="0">
+              <view class="radio-icon"></view>
+              <text>暂不上架</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 示例图片 -->
+        <view class="form-item">
+          <text class="form-label">示例图片URL</text>
+          <view class="example-images">
+            <image 
+              class="example-img" 
+              src="https://picsum.photos/750/360?random=1" 
+              mode="aspectFill"
+              bindtap="useExampleImage"
+              data-url="https://picsum.photos/750/360?random=1"
+            />
+            <image 
+              class="example-img" 
+              src="https://picsum.photos/750/360?random=2" 
+              mode="aspectFill"
+              bindtap="useExampleImage"
+              data-url="https://picsum.photos/750/360?random=2"
+            />
+            <image 
+              class="example-img" 
+              src="https://picsum.photos/750/360?random=3" 
+              mode="aspectFill"
+              bindtap="useExampleImage"
+              data-url="https://picsum.photos/750/360?random=3"
+            />
+          </view>
+          <text class="form-hint">点击示例图片可直接使用</text>
+        </view>
+      </view>
+
+      <view class="dialog-footer">
+        <button class="cancel-btn" bindtap="hideDialog">取消</button>
+        <button class="submit-btn" bindtap="submitForm">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

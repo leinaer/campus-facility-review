@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "evaluation-card": "/components/evaluation-card/evaluation-card"
+  }
+}

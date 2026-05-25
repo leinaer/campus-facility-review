@@ -1,0 +1,32 @@
+/* components/rating-stars/rating-stars.wxss */
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.star-item {
+  padding: 8rpx;
+  transition: transform 0.2s;
+}
+
+.star-item:active {
+  transform: scale(1.2);
+}
+
+.star-icon {
+  font-size: 48rpx;
+  color: #ddd;
+  transition: color 0.3s;
+}
+
+.star-item.active .star-icon {
+  color: #ffb400;
+}
+
+.rating-text {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #ffb400;
+  font-weight: bold;
+}

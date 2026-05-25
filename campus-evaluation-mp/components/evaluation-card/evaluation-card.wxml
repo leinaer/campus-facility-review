@@ -1,0 +1,134 @@
+<!-- components/evaluation-card/evaluation-card.wxml -->
+<view class="evaluation-card">
+  <!-- 用户信息 -->
+  <view class="card-header">
+    <image class="user-avatar" src="{{processedEvaluation.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+    <view class="user-info">
+      <text class="user-name">{{processedEvaluation.userNickname}}</text>
+      <text class="evaluate-time">{{processedEvaluation.createTime}}</text>
+    </view>
+    <view class="rating-display" wx:if="{{processedEvaluation.rating}}">
+      <text class="stars">⭐</text>
+      <text class="rating-value">{{processedEvaluation.rating}}</text>
+    </view>
+  </view>
+
+  <!-- 评价内容 -->
+  <view class="card-content">
+    <text class="content-text">{{processedEvaluation.content}}</text>
+  </view>
+
+  <!-- 图片展示 -->
+  <view wx:if="{{processedEvaluation.images && processedEvaluation.images.length > 0}}" class="card-images">
+    <block wx:for="{{processedEvaluation.images}}" wx:key="index" wx:for-item="img">
+      <image 
+        class="evaluation-image" 
+        src="{{img}}" 
+        mode="aspectFill" 
+        bindtap="previewImage"
+        data-index="{{index}}"
+      />
+    </block>
+  </view>
+
+  <!-- 标签和心情 -->
+  <view wx:if="{{processedEvaluation.tags && processedEvaluation.tags.length > 0 || processedEvaluation.mood}}" class="card-footer">
+    <text wx:if="{{processedEvaluation.mood}}" class="mood-tag">{{getMoodIcon(processedEvaluation.mood)}}</text>
+    <block wx:for="{{processedEvaluation.tags}}" wx:key="index" wx:for-item="tag">
+      <text class="tag-item">#{{tag}}</text>
+    </block>
+  </view>
+
+  <!-- 互动数据 -->
+  <view class="interaction-bar">
+  <!-- 点赞 -->
+  <view class="interaction-item" catchtap="onLike">
+    <image
+      class="icon {{processedEvaluation.isLiked ? 'active' : ''}}"
+      src="{{processedEvaluation.isLiked ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}"
+      mode="aspectFit"
+    />
+    <text class="count {{processedEvaluation.isLiked ? 'active' : ''}}">{{processedEvaluation.likeCount || 0}}</text>
+  </view>
+
+  <!-- 点踩（可选，根据需求） -->
+  <view class="interaction-item" catchtap="onDislike">
+    <image
+      class="icon {{processedEvaluation.isDisliked ? 'active' : ''}}"
+      src="{{processedEvaluation.isDisliked ? '/images/icon-dislike-filled.svg' : '/images/icon-dislike.svg'}}"
+      mode="aspectFit"
+    />
+    <text class="count">{{processedEvaluation.dislikeCount || 0}}</text>
+  </view>
+
+  <!-- 评论 -->
+  <view class="interaction-item" catchtap="onComment">
+    <text class="icon comment-icon">💬</text>
+    <text class="count">{{processedEvaluation.commentCount || 0}}</text>
+  </view>
+
+  <!-- 更多操作 -->
+  <view class="interaction-item" catchtap="onShowMore" data-id="{{processedEvaluation.evaluationId}}">
+    <text class="icon more-icon">⋮</text>
+  </view>
+</view>
+
+
+
+  <!-- 评论列表 -->
+  <view class="comment-section" wx:if="{{showComments}}">
+    <view class="comment-list" wx:if="{{comments.length > 0}}">
+      <view class="comment-item" wx:for="{{comments}}" wx:key="commentId">
+        <view class="comment-header">
+          <image class="comment-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+          <view class="comment-user-info">
+            <text class="comment-user">{{item.userNickname}}</text>
+            <text class="comment-time">{{item.relativeTime}}</text>
+          </view>
+        </view>
+        <view class="comment-content">
+          <text wx:if="{{item.replyToUserNickname}}" class="reply-to">@{{item.replyToUserNickname}} </text>
+          <text>{{item.content}}</text>
+        </view>
+        <view class="comment-actions">
+          <view class="like-btn {{item.isLiked ? 'liked' : ''}}" catchtap="onCommentLike" data-comment-id="{{item.commentId}}">
+            <text class="like-icon">{{item.isLiked ? '❤️' : '🤍'}}</text>
+            <text class="like-count">{{item.likeCount || 0}}</text>
+          </view>
+          <text class="reply-btn" catchtap="onReply" data-comment-id="{{item.commentId}}" data-user-id="{{item.userId}}" data-user-name="{{item.userNickname}}">回复</text>
+          <text wx:if="{{item.replies && item.replies.length > 0}}" class="replies-count">{{item.replies.length}}条回复</text>
+        </view>
+        
+        <!-- 子评论（楼中楼） -->
+        <view class="sub-comments" wx:if="{{item.replies && item.replies.length > 0}}">
+          <view class="sub-comment-item" wx:for="{{item.replies}}" wx:key="commentId" wx:for-item="sub">
+            <view class="sub-comment-header">
+              <image class="sub-comment-avatar" src="{{sub.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+              <view class="sub-comment-user-info">
+                <text class="sub-comment-user">{{sub.userNickname}}</text>
+                <text class="sub-comment-time">{{sub.relativeTime}}</text>
+              </view>
+            </view>
+            <view class="sub-comment-content">
+              <text wx:if="{{sub.replyToUserNickname}}" class="reply-to">@{{sub.replyToUserNickname}} </text>
+              <text>{{sub.content}}</text>
+            </view>
+            <view class="sub-comment-actions">
+              <view class="like-btn {{sub.isLiked ? 'liked' : ''}}" catchtap="onSubCommentLike" data-comment-id="{{sub.commentId}}" data-parent-id="{{item.commentId}}">
+                <text class="like-icon">{{sub.isLiked ? '❤️' : '🤍'}}</text>
+                <text class="like-count">{{sub.likeCount || 0}}</text>
+              </view>
+              <text class="reply-btn" catchtap="onReply" data-comment-id="{{sub.commentId}}" data-user-id="{{sub.userId}}" data-user-name="{{sub.userNickname}}">回复</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 空评论提示 -->
+    <view class="empty-comment" wx:elif="{{comments.length === 0}}">
+      <text class="empty-icon">💭</text>
+      <text class="empty-text">暂无评论，快来抢沙发~</text>
+    </view>
+  </view>
+</view>

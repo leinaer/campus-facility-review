@@ -1,0 +1,113 @@
+<!--pages/category/facility-list.wxml-->
+<view class="facility-list-container">
+  <!-- 分类信息头部 -->
+  <view class="category-header">
+    <view class="header-left">
+      <text class="category-icon">{{categoryIcon}}</text>
+      <view class="header-info">
+        <text class="category-name">{{categoryName}}</text>
+        <text class="facility-count">共 {{facilities.length}} 个设施</text>
+      </view>
+    </view>
+    <view class="refresh-btn" bindtap="onRefresh">
+      <text>🔄</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-options">
+        <view 
+          class="filter-item {{selectedFilter === 'default' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="default"
+        >
+          <text>默认</text>
+        </view>
+        <view 
+          class="filter-item {{selectedFilter === 'rating_desc' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="rating_desc"
+        >
+          <text>⭐ 高分</text>
+        </view>
+        <view 
+          class="filter-item {{selectedFilter === 'rating_asc' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="rating_asc"
+        >
+          <text>⭐ 低分</text>
+        </view>
+        <view 
+          class="filter-item {{selectedFilter === 'review_desc' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="review_desc"
+        >
+          <text>🔥 热门</text>
+        </view>
+        <view 
+          class="filter-item {{selectedFilter === 'review_asc' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="review_asc"
+        >
+          <text>📉 冷门</text>
+        </view>
+        <view 
+          class="filter-item {{selectedFilter === 'name_asc' ? 'active' : ''}}" 
+          bindtap="setFilter" 
+          data-filter="name_asc"
+        >
+          <text>🔤 名称</text>
+        </view>
+      </view>
+    </scroll-view>
+    
+    <!-- 校区筛选 -->
+    <view class="campus-filter" wx:if="{{campusOptions.length > 0}}">
+      <picker mode="selector" range="{{campusOptions}}" value="{{selectedCampusIndex}}" bindchange="onCampusChange">
+        <view class="campus-picker">
+          <text class="campus-icon">📍</text>
+          <text class="campus-text">{{selectedCampusIndex >= 0 ? campusOptions[selectedCampusIndex] : '全部校区'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 设施列表 -->
+  <view class="facility-list" wx:if="{{filteredFacilities.length > 0}}">
+    <view class="facility-card" wx:for="{{filteredFacilities}}" wx:key="facilityId" bindtap="goToDetail" data-id="{{item.facilityId}}">
+      <image class="facility-cover" src="{{item.coverImage || '/images/default-facility.png'}}" mode="aspectFill" lazy-load />
+      <view class="facility-info">
+        <view class="facility-title-row">
+          <text class="facility-name">{{item.name}}</text>
+          <view class="facility-tags">
+            <text class="tag tag-hot" wx:if="{{item.reviewCount >= 10}}">🔥 热门</text>
+            <text class="tag tag-high" wx:if="{{item.rating >= 4.5}}">⭐ 高分</text>
+            <text class="tag tag-new" wx:if="{{item.reviewCount > 0 && item.reviewCount < 3}}">🆕 新品</text>
+          </view>
+        </view>
+        <text class="facility-location" wx:if="{{item.location}}">📍 {{item.location}}</text>
+        <view class="facility-meta">
+          <text class="facility-rating">⭐ {{item.rating || 0}}</text>
+          <text class="facility-count">{{item.reviewCount || 0}}条评价</text>
+          <text class="facility-campus" wx:if="{{item.campus}}">{{item.campus}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{filteredFacilities.length === 0 && !loading}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">暂无设施</text>
+    <text class="empty-tip" wx:if="{{selectedCampusIndex >= 0}}">该校区下没有设施，试试选择其他校区</text>
+    <text class="empty-tip" wx:else>该分类下还没有设施或没有符合条件的设施</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

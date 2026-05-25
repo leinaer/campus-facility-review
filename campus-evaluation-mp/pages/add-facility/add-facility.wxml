@@ -1,0 +1,123 @@
+<!--pages/add-facility/add-facility.wxml-->
+<view class="facility-container">
+  <!-- 页面标题和操作栏 -->
+  <view class="header-bar">
+    <text class="page-title">设施管理</text>
+    <view class="add-btn" bindtap="showAddDialog">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加设施</text>
+    </view>
+  </view>
+
+    <!-- 设施列表 -->
+    <view class="facility-list">
+    <view wx:if="{{facilities.length === 0}}" class="empty-state">
+      <text class="empty-icon">🏫</text>
+      <text class="empty-text">暂无设施数据</text>
+    </view>
+
+    <block wx:for="{{facilities}}" wx:key="facilityId">
+      <view class="facility-item">
+        <!-- 设施信息 -->
+        <view class="item-info">
+          <image class="item-cover" src="{{item.coverImage || '/images/default-icon.png'}}" mode="aspectFill" lazy-load />
+          <view class="item-details">
+            <view class="item-header">
+              <text class="item-name">{{item.name}}</text>
+              <text class="status-tag status-{{item.status}}">{{item.status === 1 ? '正常' : '下架'}}</text>
+            </view>
+            <view class="item-meta">
+              <text class="meta-item">📂 {{getCategoryName(item.categoryId)}}</text>
+              <text class="meta-item">📍 {{item.campus}} - {{item.location}}</text>
+            </view>
+            <view class="item-stats">
+              <text class="stat-item">⭐ {{item.rating || 0}}分</text>
+              <text class="stat-item">💬 {{item.reviewCount || 0}}条评价</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="item-actions">
+          <view class="action-btn status-btn" bindtap="toggleStatus" data-item="{{item}}">
+            <text>{{item.status === 1 ? '下架' : '上架'}}</text>
+          </view>
+          <view class="action-btn edit-btn" bindtap="showEditDialog" data-item="{{item}}">
+            <text>编辑</text>
+          </view>
+          <view class="action-btn delete-btn" bindtap="deleteFacility" data-item="{{item}}">
+            <text>删除</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+
+  <!-- 添加/编辑设施弹窗 -->
+  <view wx:if="{{showEditDialog}}" class="dialog-mask" bindtap="hideDialog">
+    <view class="dialog-content" catchtap="stopPropagation">
+      <view class="dialog-header">
+        <text class="dialog-title">{{isEdit ? '编辑设施' : '添加设施'}}</text>
+        <view class="dialog-close" bindtap="hideDialog">
+          <text class="close-icon">×</text>
+        </view>
+      </view>
+
+      <scroll-view class="dialog-body" scroll-y>
+        <view class="form-item">
+          <text class="form-label">设施名称 <text class="required">*</text></text>
+          <input class="form-input" placeholder="请输入设施名称" value="{{form.name}}" bindinput="onNameInput" maxlength="50" />
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">分类 <text class="required">*</text></text>
+          <picker mode="selector" range="{{categories}}" range-key="name" value="{{form.categoryIndex}}" bindchange="onCategoryChange">
+            <view class="picker-input">
+              <text class="{{form.categoryIndex >= 0 ? '' : 'placeholder'}}">
+                {{form.categoryIndex >= 0 ? categories[form.categoryIndex].name : '请选择分类'}}
+              </text>
+              <text class="arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">校区 <text class="required">*</text></text>
+          <picker mode="selector" range="{{campusOptions}}" value="{{form.campusIndex}}" bindchange="onCampusChange">
+            <view class="picker-input">
+              <text class="{{form.campusIndex >= 0 ? '' : 'placeholder'}}">
+                {{form.campusIndex >= 0 ? campusOptions[form.campusIndex] : '请选择校区'}}
+              </text>
+              <text class="arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">位置描述 <text class="required">*</text></text>
+          <input class="form-input" placeholder="如：东门旁、教学楼一楼" value="{{form.location}}" bindinput="onLocationInput" maxlength="100" />
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">封面图片</text>
+          <view class="image-upload" bindtap="chooseCover">
+            <image wx:if="{{form.coverImage}}" class="preview-image" src="{{form.coverImage}}" mode="aspectFill" lazy-load />
+            <view wx:else class="upload-placeholder">
+              <text class="upload-icon">📷</text>
+              <text class="upload-text">点击上传封面</text>
+            </view>
+            <view wx:if="{{form.coverImage}}" class="delete-cover" bindtap="deleteCover" catchtap="deleteCover">
+              <text>×</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="dialog-footer">
+        <button class="cancel-btn" bindtap="hideDialog">取消</button>
+        <button class="submit-btn" bindtap="saveFacility">{{isEdit ? '保存' : '添加'}}</button>
+      </view>
+    </view>
+  </view>
+</view>

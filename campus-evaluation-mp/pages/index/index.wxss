@@ -1,0 +1,614 @@
+/* pages/index/index.wxss */
+/* ==================== 全局样式 ==================== */
+.container {
+  background: linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%);
+  min-height: 100vh;
+  padding: 0 24rpx;
+  padding-bottom: 40rpx;
+}
+
+/* ==================== 搜索栏 - 玻璃拟态 ==================== */
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(245, 247, 250, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 24rpx 0;
+  margin: 0 -24rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 28rpx;
+  width: 36rpx;
+  height: 36rpx;
+  z-index: 1;
+  opacity: 0.6;
+}
+
+.search-input {
+  width: 100%;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 40rpx;
+  padding-left: 80rpx;
+  padding-right: 30rpx;
+  font-size: 28rpx;
+  color: #1a1a1a;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06),
+              inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 8rpx 30rpx rgba(102, 126, 234, 0.15),
+              inset 0 1rpx 0 rgba(255, 255, 255, 1);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.search-input::placeholder {
+  color: #a0a0a0;
+}
+
+/* ==================== 公告栏 - 渐变卡片 ==================== */
+.notice-bar {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 28rpx;
+  color: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.notice-bar::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200rpx;
+  height: 200rpx;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.notice-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+  filter: brightness(0) invert(1);
+  position: relative;
+  z-index: 1;
+}
+
+.notice-swiper {
+  flex: 1;
+  height: 44rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.notice-text {
+  font-size: 26rpx;
+  line-height: 44rpx;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.notice-close {
+  width: 36rpx;
+  height: 36rpx;
+  margin-left: 16rpx;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  position: relative;
+  z-index: 1;
+  padding: 8rpx;
+}
+
+/* ==================== 分类网格 - 现代卡片 ==================== */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16rpx;
+  margin-bottom: 28rpx;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 32rpx 20rpx;
+  border-radius: 28rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.04);
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  border-radius: 20rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-item:active {
+  transform: scale(0.92);
+  background: rgba(102, 126, 234, 0.08);
+}
+
+.category-icon-wrapper {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.category-icon-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+  border-radius: 28rpx;
+}
+
+.category-emoji {
+  font-size: 52rpx;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0,0,0,0.1));
+}
+
+.category-name {
+  font-size: 24rpx;
+  color: #2c2c2c;
+  font-weight: 500;
+  letter-spacing: 0.5rpx;
+}
+
+/* ==================== Banner轮播 ==================== */
+.banner-section {
+  margin: 28rpx 0 36rpx 0;
+  border-radius: 28rpx;
+  overflow: hidden;
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.banner-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.05) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.banner-swiper {
+  width: 100%;
+  height: 380rpx;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+/* ==================== 通用板块 - 现代卡片 ==================== */
+.section {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 28rpx;
+  padding: 32rpx;
+  margin-bottom: 28rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 0.5rpx;
+}
+
+.section-more {
+  font-size: 26rpx;
+  color: #667eea;
+  font-weight: 500;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  background: rgba(102, 126, 234, 0.08);
+  transition: all 0.3s ease;
+}
+
+.section-more:active {
+  background: rgba(102, 126, 234, 0.15);
+  transform: scale(0.95);
+}
+
+/* ==================== 推荐设施横向滚动 ==================== */
+.recommend-section {
+  padding: 32rpx 0 32rpx 32rpx;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 28rpx;
+  margin-bottom: 28rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.04);
+}
+
+.recommend-section .section-header {
+  padding-right: 32rpx;
+}
+
+.facility-scroll {
+  white-space: nowrap;
+  padding-right: 32rpx;
+}
+
+.facility-card {
+  display: inline-block;
+  width: 300rpx;
+  margin-right: 20rpx;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+}
+
+.facility-card:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.facility-cover {
+  width: 100%;
+  height: 200rpx;
+  object-fit: cover;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.facility-info {
+  padding: 24rpx;
+}
+
+.facility-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 12rpx;
+}
+
+.facility-meta {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.facility-rating {
+  font-size: 26rpx;
+  color: #ff9500;
+  font-weight: 600;
+}
+
+.facility-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.facility-tag {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* ==================== 热门排行榜 ==================== */
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+}
+
+.ranking-item:active {
+  transform: scale(0.98);
+  background: linear-gradient(145deg, #f8f9fa 0%, #f0f1f3 100%);
+}
+
+.rank-badge {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #fff;
+  text-shadow: 0 2rpx 4rpx rgba(255, 215, 0, 0.3);
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  color: #fff;
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%);
+  color: #fff;
+}
+
+.rank-normal {
+  background: linear-gradient(145deg, #f5f7fa 0%, #e8eaed 100%);
+  color: #666;
+}
+
+.ranking-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranking-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10rpx;
+}
+
+.ranking-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.ranking-score {
+  font-size: 26rpx;
+  color: #ff9500;
+  font-weight: 600;
+}
+
+.ranking-hot {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.ranking-trend {
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+.ranking-trend.up {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.ranking-trend.down {
+  color: #52c41a;
+  background: rgba(82, 196, 26, 0.1);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 20rpx;
+  background: rgba(102, 126, 234, 0.08);
+  border-radius: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:active {
+  background: rgba(102, 126, 234, 0.15);
+  transform: scale(0.95);
+}
+
+.refresh-text {
+  font-size: 24rpx;
+  color: #667eea;
+  font-weight: 500;
+}
+
+/* ==================== 筛选栏 ==================== */
+.filter-bar {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  padding: 8rpx;
+  background: rgba(245, 247, 250, 0.6);
+  border-radius: 20rpx;
+}
+
+.filter-item {
+  flex: 1;
+  padding: 16rpx 0;
+  text-align: center;
+  font-size: 26rpx;
+  color: #666;
+  border-radius: 16rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+}
+
+.filter-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.25);
+  font-weight: 600;
+}
+
+.filter-item:active {
+  transform: scale(0.96);
+}
+
+/* ==================== 加载与空状态 ==================== */
+.load-more {
+  text-align: center;
+  padding: 32rpx 0;
+  color: #667eea;
+  font-size: 28rpx;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.load-more:active {
+  opacity: 0.7;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+  gap: 16rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 30rpx;
+  color: #666;
+  font-weight: 600;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: #999;
+}
+
+/* ==================== 评论输入面板 ==================== */
+.comment-input-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.05);
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+}
+
+.comment-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.comment-input {
+  flex: 1;
+  height: 72rpx;
+  background: rgba(245, 247, 250, 0.8);
+  border-radius: 36rpx;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  color: #1a1a1a;
+  border: 1rpx solid rgba(0, 0, 0, 0.05);
+}
+
+.comment-send-btn {
+  padding: 0 32rpx;
+  height: 72rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.comment-send-btn:active {
+  transform: scale(0.96);
+}
+
+.comment-send-btn[disabled] {
+  opacity: 0.5;
+  box-shadow: none;
+}

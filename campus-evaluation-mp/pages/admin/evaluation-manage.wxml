@@ -1,0 +1,68 @@
+<!--pages/admin/evaluation-manage.wxml-->
+<view class="evaluation-manage-container">
+  <!-- 页面标题 -->
+  <view class="header-bar">
+    <text class="page-title">评价管理</text>
+    <text class="total-count">共 {{evaluations.length}} 条评价</text>
+  </view>
+
+  <!-- 评价列表 -->
+  <view class="evaluation-list">
+    <view wx:if="{{loading}}" class="loading-state">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <view wx:elif="{{evaluations.length === 0}}" class="empty-state">
+      <text class="empty-icon">💬</text>
+      <text class="empty-text">暂无评价数据</text>
+    </view>
+
+    <block wx:else>
+      <view class="evaluation-item" wx:for="{{evaluations}}" wx:key="evaluationId">
+        <!-- 评价头部 -->
+        <view class="item-header">
+          <view class="user-info">
+            <text class="facility-name">📍 {{getFacilityName(item.facilityId)}}</text>
+            <text class="eval-type type-{{item.type}}">{{item.type === 'EVALUATION' ? '设施评价' : '日常分享'}}</text>
+          </view>
+          <text class="status-tag status-{{item.status}}">{{item.status === 1 ? '正常' : '已删除'}}</text>
+        </view>
+
+        <!-- 评分 -->
+        <view wx:if="{{item.type === 'EVALUATION' && item.rating}}" class="rating-display">
+          <text class="stars">⭐</text>
+          <text class="rating-text">{{item.rating}}.0 分</text>
+        </view>
+
+        <!-- 评价内容 -->
+        <view class="item-content">
+          <text class="content-text">{{item.content}}</text>
+        </view>
+
+        <!-- 图片展示 -->
+        <view wx:if="{{item.images.length > 0}}" class="images-grid">
+          <image wx:for="{{item.images}}" wx:key="index" wx:for-item="img" class="image-item" src="{{img}}" mode="aspectFill" lazy-load />
+        </view>
+
+        <!-- 标签 -->
+        <view wx:if="{{parseTags(item.tags).length > 0}}" class="tags-display">
+          <text wx:for="{{parseTags(item.tags)}}" wx:key="index" wx:for-item="tag" class="tag-item">{{tag}}</text>
+        </view>
+
+        <!-- 统计信息 -->
+        <view class="item-stats">
+          <text class="stat-item">👍 {{item.likeCount || 0}} 点赞</text>
+          <text class="stat-item">💬 {{item.commentCount || 0}} 评论</text>
+          <text class="stat-item">🕒 {{item.createTime}}</text>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="item-actions">
+          <view class="action-btn delete-btn" bindtap="deleteEvaluation" data-item="{{item}}">
+            <text>删除评价</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

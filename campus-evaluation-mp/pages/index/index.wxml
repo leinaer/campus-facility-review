@@ -1,0 +1,172 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- 1. 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <image class="search-icon" src="/images/search-icon.png" mode="aspectFit" lazy-load />
+      <input
+        class="search-input"
+        placeholder="搜索食堂、教室、图书馆..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <!-- 2. 公告栏 -->
+  <view class="notice-bar" wx:if="{{notices.length > 0}}">
+    <image class="notice-icon" src="/images/notice-icon.png" mode="aspectFit" lazy-load />
+    <swiper class="notice-swiper" vertical="{{true}}" autoplay="{{true}}" interval="{{4000}}" circular="{{true}}" duration="{{500}}">
+      <swiper-item wx:for="{{notices}}" wx:key="index">
+        <text class="notice-text" bindtap="onNoticeTap" data-index="{{index}}">{{item}}</text>
+      </swiper-item>
+    </swiper>
+    <image class="notice-close" src="/images/close-icon.png" mode="aspectFit" bindtap="closeNotice" wx:if="{{showNotice}}" lazy-load />
+  </view>
+
+  <!-- 3. 分类网格入口 -->
+  <view class="category-grid">
+    <block wx:for="{{categories}}" wx:key="categoryId">
+      <view class="category-item" bindtap="onCategoryTap" data-id="{{item.categoryId}}" data-name="{{item.name}}" data-icon="{{item.icon}}">
+        <view class="category-icon-wrapper" style="background: {{item.color || defaultColors[index % defaultColors.length]}}">
+          <text class="category-emoji">{{item.icon || '📋'}}</text>
+        </view>
+        <text class="category-name">{{item.name}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 2. Banner轮播 -->
+<view class="banner-section" wx:if="{{banners.length > 0}}">
+  <swiper 
+    class="banner-swiper" 
+    indicator-dots="{{true}}"
+    autoplay="{{true}}"
+    interval="{{3000}}"
+    duration="{{500}}"
+    circular="{{true}}"
+    indicator-color="rgba(255, 255, 255, 0.5)"
+    indicator-active-color="#fff"
+  >
+    <block wx:for="{{banners}}" wx:key="bannerId">
+      <swiper-item>
+        <image 
+          class="banner-image" 
+          src="{{item.imageUrl}}" 
+          mode="aspectFill"
+          bindtap="onBannerTap"
+          data-link="{{item.linkUrl}}"
+        />
+      </swiper-item>
+    </block>
+  </swiper>
+</view>
+
+
+  <!-- 5. 推荐设施（横向滚动） -->
+  <view class="section recommend-section">
+    <view class="section-header">
+      <text class="section-title">🔥 热门推荐</text>
+      <text class="section-more" bindtap="goToDiscover">查看更多 ›</text>
+    </view>
+    
+    <scroll-view class="facility-scroll" scroll-x="{{true}}" scroll-with-animation="{{true}}" show-scrollbar="{{false}}">
+      <view class="facility-card" wx:for="{{topFacilities}}" wx:key="facilityId" bindtap="goToDetail" data-id="{{item.facilityId}}">
+        <image class="facility-cover" src="{{item.coverImage || '/images/default-facility.png'}}" mode="aspectFill" lazy-load />
+        <view class="facility-info">
+          <text class="facility-name">{{item.name}}</text>
+          <view class="facility-meta">
+            <text class="facility-rating">⭐ {{item.rating}}</text>
+            <text class="facility-count">{{item.reviewCount}}评</text>
+          </view>
+        </view>
+        <view class="facility-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 6. 热门排行榜 -->
+  <view class="section ranking-section" wx:if="{{rankings.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">🏆 热门排行榜</text>
+      <view class="refresh-btn" bindtap="refreshRankings">
+        <text>🔄</text>
+        <text class="refresh-text">刷新</text>
+      </view>
+    </view>
+    
+    <view class="ranking-list">
+      <view class="ranking-item" wx:for="{{rankings}}" wx:key="facilityId" bindtap="goToDetail" data-id="{{item.facilityId}}">
+        <view class="rank-badge rank-{{index < 3 ? index + 1 : 'normal'}}">{{index + 1}}</view>
+        <view class="ranking-info">
+          <text class="ranking-name">{{item.name}}</text>
+          <view class="ranking-meta">
+            <text class="ranking-score">⭐ {{item.rating}}</text>
+            <text class="ranking-hot">🔥 {{item.reviewCount}}评</text>
+            <text class="ranking-trend {{item.trend > 0 ? 'up' : item.trend < 0 ? 'down' : ''}}">
+              {{item.trend > 0 ? '↑' + item.trend : item.trend < 0 ? '↓' + (-item.trend) : '→'}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 7. 精选评价 -->
+  <view class="section evaluation-section">
+    <view class="section-header">
+      <text class="section-title">⭐ 精选评价</text>
+      <view class="filter-btn" bindtap="toggleFilter">
+        <text>筛选 ▼</text>
+      </view>
+    </view>
+    
+    <!-- 筛选条件（可选） -->
+    <view class="filter-bar" wx:if="{{showFilter}}">
+      <view class="filter-item {{filterType === 'featured' ? 'active' : ''}}" bindtap="setFilter" data-type="featured">精选</view>
+      <view class="filter-item {{filterType === 'withImage' ? 'active' : ''}}" bindtap="setFilter" data-type="withImage">有图</view>
+      <view class="filter-item {{filterType === 'highRating' ? 'active' : ''}}" bindtap="setFilter" data-type="highRating">高分</view>
+    </view>
+  
+    <view class="evaluation-list">
+      <evaluation-card
+        wx:for="{{latestEvaluations}}"
+        wx:key="evaluationId"
+        evaluation="{{item}}"
+        bind:like="onEvaluationLike"
+        bind:comment="onEvaluationComment"
+        bind:reply="onEvaluationReply"
+      />
+    </view>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" bindtap="loadMoreEvaluations" wx:if="{{hasMore}}">
+      <text>{{loadingMore ? '加载中...' : '加载更多'}}</text>
+    </view>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{latestEvaluations.length === 0 && !loading}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无精选评价</text>
+      <text class="empty-hint">快去发布第一条优质评价吧~</text>
+    </view>
+  </view>
+
+  <!-- 评论输入框（固定在底部） -->
+  <view class="comment-input-panel" wx:if="{{showCommentInput}}">
+    <view class="comment-input-wrapper">
+      <input
+        class="comment-input"
+        placeholder="{{replyToUserName ? '回复 @' + replyToUserName : '写评论...'}}"
+        value="{{commentContent}}"
+        bindinput="onCommentInput"
+        focus="{{showCommentInput}}"
+        confirm-type="send"
+        bindconfirm="submitComment"
+      />
+      <button class="comment-send-btn" bindtap="submitComment" disabled="{{!canSubmit}}">发送</button>
+    </view>
+  </view>
+</view>

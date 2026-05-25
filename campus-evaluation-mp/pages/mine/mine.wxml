@@ -1,0 +1,108 @@
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card" bindtap="goEditProfile">
+    <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" bindtap="changeAvatar" catchtap="changeAvatar" lazy-load />
+    <view class="user-info">
+      <view class="nickname-row">
+        <text class="nickname">{{userInfo.nickname || '未登录'}}</text>
+      </view>
+      <view class="user-tags">
+        <text class="role-tag" wx:if="{{showAdmin}}">👑 管理员</text>
+        <text class="role-tag user" wx:else>👤 普通用户</text>
+        <text class="level-tag" wx:if="{{userLevel}}">Lv.{{userLevel.level}} {{userLevel.title}}</text>
+      </view>
+      <text class="signature" wx:if="{{userInfo.signature}}">{{userInfo.signature}}</text>
+      <text class="signature empty" wx:else>✏️ 点击编辑个人资料</text>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="stats-card">
+    <view class="stat-item" bindtap="goMyEvaluations">
+      <text class="stat-num">{{stats.evaluationCount || 0}}</text>
+      <text class="stat-label">我的评价</text>
+    </view>
+    <view class="stat-item" bindtap="goMyPosts">
+      <text class="stat-num">{{stats.postCount || 0}}</text>
+      <text class="stat-label">我的帖子</text>
+    </view>
+    <view class="stat-item" bindtap="goMyCollects">
+      <text class="stat-num">{{stats.collectCount || 0}}</text>
+      <text class="stat-label">我的收藏</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{stats.likeReceived || 0}}</text>
+      <text class="stat-label">获赞数</text>
+    </view>
+  </view>
+
+  <!-- 普通用户功能 -->
+  <view class="my-section">
+    <view class="section-title">我的功能</view>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="goMyEvaluations">
+        <text class="menu-icon">📝</text>
+        <text class="menu-text">我的评价</text>
+        <text class="menu-badge" wx:if="{{stats.evaluationCount > 0}}">{{stats.evaluationCount}}</text>
+        <text class="arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goMyPosts">
+        <text class="menu-icon">📱</text>
+        <text class="menu-text">我的帖子</text>
+        <text class="menu-badge" wx:if="{{stats.postCount > 0}}">{{stats.postCount}}</text>
+        <text class="arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goMyCollects">
+        <text class="menu-icon">⭐</text>
+        <text class="menu-text">我的收藏</text>
+        <text class="menu-badge" wx:if="{{stats.collectCount > 0}}">{{stats.collectCount}}</text>
+        <text class="arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goNotifications">
+        <text class="menu-icon">🔔</text>
+        <text class="menu-text">消息通知</text>
+        <text class="menu-badge red" wx:if="{{unreadNotificationCount > 0}}">{{unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近评价列表 -->
+  <view class="evaluation-section">
+    <view class="section-header">
+      <text class="section-title">最近评价</text>
+      <text class="view-all" bindtap="goMyEvaluations" wx:if="{{myEvaluations.length > 0}}">查看全部 ›</text>
+    </view>
+    <view wx:if="{{myEvaluations.length > 0}}" class="evaluation-list">
+      <block wx:for="{{myEvaluations}}" wx:key="evaluationId" wx:for-index="idx">
+        <view class="evaluation-item" wx:if="{{idx < 3}}" bindtap="viewEvaluationDetail" data-id="{{item.evaluationId}}">
+          <view class="eval-content">
+            <text class="content-text">{{item.content || '暂无内容'}}</text>
+            <view class="eval-footer">
+              <text class="rating">⭐ {{item.rating || 0}}</text>
+              <text class="eval-time">{{item.createTime}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view wx:else class="empty-tip">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无评价记录</text>
+      <button class="empty-action-btn" bindtap="goMyEvaluations">去评价</button>
+    </view>
+  </view>
+
+  <!-- 管理员专用入口 -->
+  <view wx:if="{{showAdmin}}" class="admin-entry-section">
+    <button class="admin-entry-btn" bindtap="goAdmin">
+      <text class="btn-icon">⚙️</text>
+      <text class="btn-text">进入管理后台</text>
+    </button>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+</view>

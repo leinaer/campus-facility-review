@@ -1,0 +1,143 @@
+<view class="container">
+  <!-- 设施信息 -->
+  <view class="facility-card">
+    <view class="facility-header">
+      <image class="facility-cover" src="{{facility.coverImage || '/images/default-icon.png'}}" mode="aspectFill" lazy-load />
+      <view class="facility-info">
+        <text class="facility-name">{{facility.name}}</text>
+        <text class="facility-location">📍 {{facility.location}}</text>
+        <view class="facility-rating" wx:if="{{facility.rating}}">
+          <text class="stars">⭐</text>
+          <text class="score">{{facility.rating}}</text>
+          <text class="count">{{facility.reviewCount || 0}}条评价</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评分（必填） -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">评分</text>
+      <text class="required-mark">必填</text>
+    </view>
+    <view class="rating-container">
+      <view class="stars-wrapper">
+        <text 
+          class="star {{rating > index ? 'active' : ''}}" 
+          wx:for="{{5}}" 
+          wx:key="index"
+          wx:for-index="index"
+          bindtap="onRatingSelect"
+          data-rating="{{index + 1}}"
+        >⭐</text>
+      </view>
+      <text class="rating-text">{{ratingText}}</text>
+    </view>
+  </view>
+
+  <!-- 心情 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">此刻心情</text>
+      <text class="optional-mark">选填</text>
+    </view>
+    <view class="mood-grid">
+      <view 
+        class="mood-item {{mood === item.key ? 'active' : ''}}" 
+        wx:for="{{moods}}" 
+        wx:key="key"
+        bindtap="onMoodSelect"
+        data-mood="{{item.key}}"
+      >
+        <text class="mood-emoji">{{item.icon}}</text>
+        <text class="mood-name">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评价内容 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">评价内容</text>
+      <text class="char-counter">{{content.length}}/500</text>
+    </view>
+    <view class="textarea-wrapper">
+      <textarea
+        class="content-textarea"
+        placeholder="分享您的使用体验和建议，帮助更多人做出选择~"
+        maxlength="500"
+        value="{{content}}"
+        bindinput="onContentInput"
+        auto-height
+        cursor-spacing="20"
+      />
+    </view>
+  </view>
+
+  <!-- 上传图片 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">上传图片</text>
+      <text class="optional-mark">最多9张</text>
+    </view>
+    <view class="image-grid {{images.length === 1 ? 'single' : images.length === 2 ? 'double' : images.length === 3 ? 'triple' : 'multi'}}">
+      <view class="image-item" wx:for="{{images}}" wx:key="index">
+        <image class="uploaded-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}" lazy-load />
+        <view class="delete-btn" catchtap="deleteImage" data-index="{{index}}">
+          <text>×</text>
+        </view>
+      </view>
+      <view class="add-image-btn" bindtap="chooseImages" wx:if="{{images.length < 9}}">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签 -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">标签</text>
+      <text class="optional-mark">选填</text>
+    </view>
+    
+    <!-- 已选标签 -->
+    <view class="selected-tags" wx:if="{{tags.length > 0}}">
+      <view 
+        class="selected-tag {{customTags.indexOf(item) > -1 ? 'custom' : ''}}" 
+        wx:for="{{tags}}" 
+        wx:key="index"
+      >
+        <text># {{item}}</text>
+        <text class="tag-delete" catchtap="deleteTag" data-tag="{{item}}">×</text>
+      </view>
+    </view>
+    
+    <!-- 推荐标签 -->
+    <view class="tags-cloud">
+      <view 
+        class="tag-item {{tags.indexOf(item) > -1 ? 'active' : ''}}" 
+        wx:for="{{popularTags}}" 
+        wx:key="index"
+        bindtap="onTagSelect"
+        data-tag="{{item}}"
+      >
+        <text>{{item}}</text>
+      </view>
+      <view class="tag-item add-tag" bindtap="addCustomTag">
+        <text>+ 自定义</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部安全距离 -->
+  <view class="bottom-space"></view>
+</view>
+
+<!-- 固定提交按钮 -->
+<view class="submit-bar">
+  <button class="submit-btn {{canSubmit ? 'active' : ''}}" bindtap="onSubmit" disabled="{{!canSubmit}}">
+    发布评价
+  </button>
+</view>

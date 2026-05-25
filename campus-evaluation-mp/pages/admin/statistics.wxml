@@ -1,0 +1,103 @@
+<!--pages/admin/statistics.wxml-->
+<view class="statistics-container">
+  <!-- 页面标题 -->
+  <view class="header-bar">
+    <text class="page-title">数据统计</text>
+  </view>
+
+  <!-- 今日数据概览 -->
+  <view class="overview-section">
+    <view class="section-title">📊 今日数据</view>
+    <view class="overview-grid">
+      <view class="overview-item highlight">
+        <text class="overview-num">{{overview.todayEvaluations || 0}}</text>
+        <text class="overview-label">今日评价</text>
+      </view>
+      <view class="overview-item highlight">
+        <text class="overview-num">{{overview.todayUsers || 0}}</text>
+        <text class="overview-label">今日新增用户</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-num">{{overview.totalFacilities || 0}}</text>
+        <text class="overview-label">设施总数</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-num">{{overview.totalEvaluations || 0}}</text>
+        <text class="overview-label">评价总数</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-num">{{overview.totalUsers || 0}}</text>
+        <text class="overview-label">用户总数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评价趋势 - 柱状图 -->
+  <view class="chart-section">
+    <view class="section-title">📈 近7天评价趋势</view>
+    <view class="chart-card">
+      <view wx:if="{{evaluationTrend.length === 0}}" class="empty-hint">
+        <text>暂无数据</text>
+      </view>
+      <view wx:else class="bar-chart">
+        <view class="bar-item" wx:for="{{evaluationTrend}}" wx:key="date" wx:for-index="idx">
+          <view class="bar-wrapper">
+            <view class="bar-fill" style="height: {{trendBars[idx].height}}"></view>
+          </view>
+          <text class="bar-value">{{item.count || 0}}</text>
+          <text class="bar-label">{{item.date.substring(5)}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类统计 - 饼图 -->
+  <view class="chart-section">
+    <view class="section-title">📂 分类统计</view>
+    <view class="chart-card">
+      <view wx:if="{{categoryStats.length === 0}}" class="empty-hint">
+        <text>暂无数据</text>
+      </view>
+      <view wx:else>
+        <!-- 环形图 -->
+        <view class="donut-chart-wrapper">
+          <view class="donut-chart" style="{{donutGradient}}">
+            <view class="donut-center">
+              <text class="donut-total">{{categoryTotal}}</text>
+              <text class="donut-label">总设施数</text>
+            </view>
+          </view>
+        </view>
+        <!-- 图例 -->
+        <view class="legend-list">
+          <view class="legend-item" wx:for="{{categoryStats}}" wx:key="categoryName">
+            <view class="legend-dot" style="background-color: {{item.color}};"></view>
+            <text class="legend-name">{{item.categoryName}}</text>
+            <text class="legend-value">{{item.facilityCount}}个 ({{item.percent}}%)</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热门设施TOP10 -->
+  <view class="chart-section">
+    <view class="section-title">🏆 热门设施 TOP10</view>
+    <view class="chart-card">
+      <view wx:if="{{topFacilities.length === 0}}" class="empty-hint">
+        <text>暂无数据</text>
+      </view>
+      <view wx:else class="top-list">
+        <view class="top-item" wx:for="{{topFacilities}}" wx:key="facilityId" wx:for-index="idx">
+          <view class="rank-badge rank-{{idx < 3 ? 'top3' : 'normal'}}">
+            <text>{{idx + 1}}</text>
+          </view>
+          <view class="top-info">
+            <text class="top-name">{{item.name}}</text>
+            <text class="top-meta">⭐ {{item.rating || 0}}分 · {{item.reviewCount || 0}}条评价</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

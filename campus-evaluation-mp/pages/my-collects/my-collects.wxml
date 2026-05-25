@@ -1,0 +1,82 @@
+<!--pages/my-collects/my-collects.wxml-->
+<view class="container">
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'posts' ? 'active' : ''}}" bindtap="switchTab" data-tab="posts">
+      <text>帖子收藏</text>
+      <view class="tab-badge" wx:if="{{collectedPosts.length > 0}}">{{collectedPosts.length}}</view>
+    </view>
+    <view class="tab-item {{activeTab === 'facilities' ? 'active' : ''}}" bindtap="switchTab" data-tab="facilities">
+      <text>设施收藏</text>
+      <view class="tab-badge" wx:if="{{collectedFacilities.length > 0}}">{{collectedFacilities.length}}</view>
+    </view>
+  </view>
+
+  <!-- 帖子收藏列表 -->
+  <view wx:if="{{activeTab === 'posts'}}" class="content-area">
+    <view wx:if="{{collectedPosts.length === 0 && !loading}}" class="empty-state">
+      <view class="empty-icon">⭐</view>
+      <text class="empty-text">暂无收藏的帖子</text>
+      <button class="empty-btn" bindtap="goToDiscover">去发现</button>
+    </view>
+
+    <view wx:else class="post-list">
+      <view wx:for="{{collectedPosts}}" wx:key="postId" class="post-item">
+        <view class="post-content" bindtap="goToPost" data-id="{{item.postId || item.id}}">
+          <image wx:if="{{item.coverImage || item.images}}" class="post-cover" src="{{item.coverImage || item.images}}" mode="aspectFill" lazy-load />
+          <view class="post-info">
+            <text class="post-title">{{item.title || item.content}}</text>
+            <view class="post-meta">
+              <text class="post-author">{{item.userNickname || '匿名用户'}}</text>
+              <text class="post-stats">❤️ {{item.likeCount || 0}} 💬 {{item.commentCount || 0}}</text>
+            </view>
+            <view class="post-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+              <text wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag" class="post-tag">{{tag}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="post-actions">
+          <button class="action-btn cancel" bindtap="cancelCollect" data-id="{{item.postId || item.id}}">
+            <text>取消收藏</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+  </view>
+
+  <!-- 设施收藏列表 -->
+  <view wx:if="{{activeTab === 'facilities'}}" class="content-area">
+    <view wx:if="{{collectedFacilities.length === 0 && !loading}}" class="empty-state">
+      <view class="empty-icon">🏢</view>
+      <text class="empty-text">暂无收藏的设施</text>
+      <button class="empty-btn" bindtap="goToDiscover">去发现</button>
+    </view>
+
+    <view wx:else class="facility-list">
+      <view wx:for="{{collectedFacilities}}" wx:key="facilityId" class="facility-item" bindtap="goToFacility" data-id="{{item.facilityId || item.id}}">
+        <image class="facility-cover" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
+        <view class="facility-info">
+          <text class="facility-name">{{item.name}}</text>
+          <text class="facility-location" wx:if="{{item.location}}">📍 {{item.location}}</text>
+          <view class="facility-stats">
+            <text class="facility-rating">⭐ {{item.rating || 0}}</text>
+            <text class="facility-reviews">{{item.reviewCount || 0}}条评价</text>
+          </view>
+        </view>
+        <view class="facility-actions">
+          <button class="action-btn cancel" bindtap="cancelFacilityCollect" data-id="{{item.facilityId || item.id}}" catchtap="cancelFacilityCollect">
+            <text>取消</text>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-state">
+      <text>加载中...</text>
+    </view>
+  </view>
+</view>

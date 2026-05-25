@@ -1,0 +1,86 @@
+<view class="discover-container">
+  <view class="top-bar">
+    <view class="search-bar" bindtap="goToSearch">
+      <image class="search-icon-img" src="/images/search-icon.png" mode="aspectFit" lazy-load />
+      <text class="search-placeholder">搜索帖子、话题...</text>
+    </view>
+  </view>
+
+  <view class="filter-bar">
+    <view class="filter-item {{sortBy === 'hot' ? 'active' : ''}}" bindtap="setSort" data-sort="hot">
+      <text>推荐</text>
+    </view>
+    <view class="filter-item {{sortBy === 'latest' ? 'active' : ''}}" bindtap="setSort" data-sort="latest">
+      <text>最新</text>
+    </view>
+  </view>
+
+  <view class="waterfall-container" wx:if="{{leftColumn.length > 0 || rightColumn.length > 0}}">
+    <view class="waterfall-column">
+      <view 
+        class="note-card" 
+        wx:for="{{leftColumn}}" 
+        wx:key="postId"
+        bindtap="goToPostDetail"
+        data-id="{{item.postId}}"
+      >
+        <view class="note-cover">
+          <image class="cover-image" src="{{item.coverImage || '/images/default-cover.svg'}}" mode="aspectFill" lazy-load="true" lazy-load />
+        </view>
+        <view class="note-content">
+          <text class="note-title">{{item.title || item.content}}</text>
+          <view class="note-footer">
+            <view class="note-author">
+              <image class="author-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+              <text class="author-name">{{item.userNickname || '匿名用户'}}</text>
+            </view>
+            <view class="note-like" catchtap="onLike" data-id="{{item.postId}}">
+              <image class="like-icon-img" src="{{item.isLiked ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}" mode="aspectFit" lazy-load />
+              <text class="like-count {{item.isLiked ? 'liked' : ''}}">{{item.likeCount || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="waterfall-column">
+      <view 
+        class="note-card" 
+        wx:for="{{rightColumn}}" 
+        wx:key="postId"
+        bindtap="goToPostDetail"
+        data-id="{{item.postId}}"
+      >
+        <view class="note-cover">
+          <image class="cover-image" src="{{item.coverImage || '/images/default-cover.svg'}}" mode="aspectFill" lazy-load="true" lazy-load />
+        </view>
+        <view class="note-content">
+          <text class="note-title">{{item.title || item.content}}</text>
+          <view class="note-footer">
+            <view class="note-author">
+              <image class="author-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+              <text class="author-name">{{item.userNickname || '匿名用户'}}</text>
+            </view>
+            <view class="note-like" catchtap="onLike" data-id="{{item.postId}}">
+              <image class="like-icon-img" src="{{item.isLiked ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}" mode="aspectFit" lazy-load />
+              <text class="like-count {{item.isLiked ? 'liked' : ''}}">{{item.likeCount || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{posts.length === 0 && !loading}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">暂无笔记，快来发布第一条吧~</text>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="no-more" wx:if="{{!hasMore && posts.length > 0}}">
+    <text>— 到底了 —</text>
+  </view>
+</view>

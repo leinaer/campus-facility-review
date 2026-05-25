@@ -1,0 +1,84 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-box">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-input" 
+        placeholder="搜索话题"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+      <text wx:if="{{searchKeyword}}" class="clear-btn" bindtap="clearSearch">×</text>
+    </view>
+    <button class="search-btn" bindtap="onSearch">搜索</button>
+  </view>
+
+  <!-- 筛选标签 -->
+  <view class="filter-bar">
+    <view 
+      class="filter-item {{filterType === 'hot' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-type="hot"
+    >
+      🔥 热门
+    </view>
+    <view 
+      class="filter-item {{filterType === 'new' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-type="new"
+    >
+      ✨ 最新
+    </view>
+    <view 
+      class="filter-item {{filterType === 'followed' ? 'active' : ''}}"
+      bindtap="setFilter"
+      data-type="followed"
+    >
+      ❤️ 已关注
+    </view>
+  </view>
+
+  <!-- 话题列表 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view wx:elif="{{topics.length === 0}}" class="empty-state">
+    <text class="empty-icon">🏷️</text>
+    <text class="empty-text">{{searchKeyword ? '未找到相关话题' : '暂无话题'}}</text>
+  </view>
+
+  <view wx:else class="topic-list">
+    <view 
+      wx:for="{{topics}}" 
+      wx:key="topicId" 
+      class="topic-card"
+      bindtap="goToTopic"
+      data-id="{{item.topicId}}"
+    >
+      <view class="topic-header">
+        <text class="topic-icon">{{item.icon || '🏷️'}}</text>
+        <view class="topic-info">
+          <text class="topic-name">#{{item.name}}</text>
+          <text class="topic-desc">{{item.description || '暂无描述'}}</text>
+          <view class="topic-stats">
+            <text class="stat">{{item.postCount || 0}} 帖子</text>
+            <text class="stat-divider">·</text>
+            <text class="stat">{{item.followCount || 0}} 关注</text>
+          </view>
+        </view>
+      </view>
+
+      <button 
+        class="follow-btn {{item.isFollowed ? 'followed' : ''}}"
+        catchtap="onFollow"
+        data-id="{{item.topicId}}"
+        data-index="{{index}}"
+      >
+        {{item.isFollowed ? '已关注' : '+ 关注'}}
+      </button>
+    </view>
+  </view>
+</view>

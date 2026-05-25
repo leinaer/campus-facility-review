@@ -1,0 +1,16 @@
+# Compiled files
+miniprogram_npm/
+
+# Private configuration (may contain sensitive data)
+project.private.config.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

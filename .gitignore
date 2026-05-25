@@ -1,0 +1,27 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+*/target/
+*/dist/
+*/node_modules/
+
+# Sensitive files
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# SQL backups (keep only latest in sql/)
+campus.sql

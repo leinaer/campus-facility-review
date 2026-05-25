@@ -1,0 +1,273 @@
+/* pages/category/facility-list.wxss */
+page {
+  background-color: #f8f9fa;
+}
+
+.facility-list-container {
+  min-height: 100vh;
+  padding-bottom: 30rpx;
+}
+
+/* ==================== 分类头部 ==================== */
+.category-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.category-icon {
+  font-size: 56rpx;
+}
+
+.header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.category-name {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.facility-count {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.refresh-btn {
+  width: 72rpx;
+  height: 72rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+}
+
+.refresh-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ==================== 筛选栏 ==================== */
+.filter-bar {
+  background: white;
+  padding: 20rpx 0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.filter-scroll {
+  white-space: nowrap;
+}
+
+.filter-options {
+  display: inline-flex;
+  padding: 0 30rpx;
+  gap: 20rpx;
+}
+
+.filter-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: #f8f9fa;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  color: #666;
+  white-space: nowrap;
+}
+
+.filter-item.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: bold;
+}
+
+.filter-item:active {
+  opacity: 0.8;
+}
+
+/* ==================== 校区筛选 ==================== */
+.campus-filter {
+  padding: 16rpx 30rpx;
+  background: white;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.campus-picker {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background: #f8f9fa;
+  border-radius: 24rpx;
+  justify-content: center;
+}
+
+.campus-icon {
+  font-size: 28rpx;
+}
+
+.campus-text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+/* ==================== 设施列表 ==================== */
+.facility-list {
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.facility-card {
+  background: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+}
+
+.facility-card:active {
+  opacity: 0.9;
+  transform: scale(0.98);
+}
+
+.facility-cover {
+  width: 200rpx;
+  height: 200rpx;
+  background-color: #f0f0f0;
+}
+
+.facility-info {
+  flex: 1;
+  padding: 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.facility-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.facility-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 16rpx;
+}
+
+.facility-tags {
+  display: flex;
+  gap: 8rpx;
+  flex-shrink: 0;
+}
+
+.tag {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  white-space: nowrap;
+}
+
+.tag-hot {
+  background: #fff3e0;
+  color: #ff9800;
+}
+
+.tag-high {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+
+.tag-new {
+  background: #e3f2fd;
+  color: #2196f3;
+}
+
+.facility-location {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.facility-meta {
+  display: flex;
+  gap: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.facility-rating {
+  color: #ffb400;
+  font-weight: bold;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  margin-bottom: 12rpx;
+  color: #666;
+}
+
+.empty-tip {
+  font-size: 26rpx;
+}
+
+/* ==================== 加载中 ==================== */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}

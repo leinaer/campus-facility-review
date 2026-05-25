@@ -1,0 +1,247 @@
+<view class="container">
+  <!-- 设施信息卡片 -->
+  <view class="facility-card">
+    <view class="facility-header">
+      <image class="facility-cover" src="{{facility.coverImage || '/images/default-icon.png'}}" mode="aspectFill" lazy-load />
+      <view class="facility-info">
+        <text class="facility-name">{{facility.name}}</text>
+        <text class="facility-location"> {{facility.location}}</text>
+        <view class="facility-stats">
+          <view class="stat-item">
+            <text class="stat-value"> {{facility.rating || '暂无'}}</text>
+            <text class="stat-label">评分</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{facility.reviewCount || 0}}</text>
+            <text class="stat-label">评价</text>
+          </view>
+        </view>
+      </view>
+      <view class="favorite-btn {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+        <image
+          class="favorite-icon"
+          src="{{isFavorite ? '/images/icon-collect-filled.svg' : '/images/icon-collect.svg'}}"
+          mode="aspectFit"
+        />
+      </view>
+
+    </view>
+
+    <!-- 标签统计 -->
+    <view wx:if="{{tags && tags.length > 0}}" class="facility-tags">
+      <view class="tag-item" wx:for="{{tags}}" wx:key="tagId">
+        <text class="tag-name">{{item.tagName}}</text>
+        <text class="tag-count">{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排序和筛选 -->
+  <view class="filter-bar">
+    <view class="filter-item {{sortBy === 'latest' ? 'active' : ''}}" bindtap="onSortChange" data-sort="latest">
+      <text> 最新</text>
+    </view>
+    <view class="filter-item {{sortBy === 'high' ? 'active' : ''}}" bindtap="onSortChange" data-sort="high">
+      <text> 高分</text>
+    </view>
+    <view class="filter-item {{sortBy === 'withImage' ? 'active' : ''}}" bindtap="onSortChange" data-sort="withImage">
+      <text> 有图</text>
+    </view>
+  </view>
+
+  <!-- 评价列表 -->
+  <view class="evaluations-list">
+    <block wx:for="{{evaluations}}" wx:key="evaluationId">
+      <view class="evaluation-card">
+        <!-- 用户信息 -->
+        <view class="card-header" bindtap="onEvaluationClick" data-id="{{item.evaluationId}}">
+          <image class="user-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+          <view class="user-info">
+            <text class="user-name">{{item.userNickname || '匿名用户'}}</text>
+            <text class="evaluation-time">{{item.createTime}}</text>
+          </view>
+          <view class="rating-badge">
+            <text class="star-icon"></text>
+            <text class="rating-value">{{item.rating}}</text>
+          </view>
+          <view wx:if="{{item.mood}}" class="mood-badge">{{item.mood === 'happy' ? '😊' : item.mood === 'sad' ? '' : item.mood === 'angry' ? '' : item.mood === 'excited' ? '' : ''}}</view>
+        </view>
+
+        <!-- 评价内容 -->
+        <view class="card-content" bindtap="onEvaluationClick" data-id="{{item.evaluationId}}">
+          <text class="content-text">{{item.content}}</text>
+        </view>
+
+        <!-- 评价图片 -->
+        <view wx:if="{{item.images && item.images.length > 0}}" class="image-grid {{item.images.length === 1 ? 'single-img' : item.images.length === 2 ? 'double-img' : item.images.length === 3 ? 'triple-img' : 'multi-img'}}">
+          <image 
+            wx:for="{{item.images}}" 
+            wx:key="index"
+            class="evaluation-image"
+            src="{{item}}" 
+            mode="aspectFill"
+            lazy-load
+            bindtap="previewImage"
+            data-index="{{index}}"
+          ></image>
+        </view>
+
+        <!-- 评价标签 -->
+        <view wx:if="{{item.tags && item.tags.length > 0}}" class="evaluation-tags">
+          <text class="tag-item" wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag">{{tag}}</text>
+        </view>
+
+        <!-- 互动栏 -->
+        <view class="card-footer">
+          <view class="interaction-item" catchtap="onComment" data-id="{{item.evaluationId}}">
+            <text class="icon">💬</text>
+            <text class="count">{{item.commentCount || 0}}</text>
+          </view>
+          <view class="interaction-item" catchtap="onHelpful" data-id="{{item.evaluationId}}" data-type="1">
+            <text class="icon">{{item.userVoteType === 1 ? '👍' : ''}}</text>
+            <image
+              class="vote-icon"
+              src="{{item.userVoteType === 1 ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}"
+              mode="aspectFit"
+            />
+            <text class="count">{{item.helpfulCount || 0}}</text>
+          </view>
+          <view class="interaction-item" catchtap="onHelpful" data-id="{{item.evaluationId}}" data-type="0">
+            <text class="icon">{{item.userVoteType === 0 ? '👎' : ''}}</text>
+            <image
+              class="vote-icon"
+              src="{{item.userVoteType === 0 ? '/images/icon-dislike-filled.svg' : '/images/icon-dislike.svg'}}"
+              mode="aspectFit"
+            />
+            <text class="count">{{item.unhelpfulCount || 0}}</text>
+          </view>
+          <view class="interaction-item" catchtap="onShowMore" data-id="{{item.evaluationId}}">
+            <text class="icon">⋮</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{hasMore}}" bindtap="onLoadMore">
+      <text>加载更多</text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && evaluations.length > 0}}">
+      <text>— 到底了 —</text>
+    </view>
+    <view class="empty" wx:if="{{evaluations.length === 0}}">
+      <view class="empty-icon"></view>
+      <text class="empty-text">暂无评价，快来抢沙发吧~</text>
+    </view>
+  </view>
+
+  <!-- 发布评价按钮 -->
+  <view class="publish-btn-wrapper">
+    <button class="publish-btn" bindtap="goToPublish">
+      <text>✏️ 写评价</text>
+    </button>
+  </view>
+
+  <view class="comment-panel {{showCommentInput ? 'show' : ''}}">
+  <!-- 面板头部 -->
+  <view class="panel-header">
+    <view class="panel-title-row">
+      <text class="panel-title">评论</text>
+      <text class="comment-count">({{comments.length}})</text>
+    </view>
+    <view class="sort-options">
+      <view class="sort-item {{commentSortBy === 'time' ? 'active' : ''}}" catchtap="onCommentSortChange" data-sort="time">
+        <text>按时间</text>
+      </view>
+      <view class="sort-item {{commentSortBy === 'hot' ? 'active' : ''}}" catchtap="onCommentSortChange" data-sort="hot">
+        <text>按热度</text>
+      </view>
+    </view>
+    <text class="panel-close" catchtap="hideCommentInput">×</text>
+  </view>
+
+  <!-- 评论列表区域 -->
+  <scroll-view 
+  class="comments-list" 
+  scroll-y 
+  enhanced 
+  show-scrollbar="{{false}}"
+  catchtouchmove="stopTouchMove"
+>
+    <block wx:if="{{comments && comments.length > 0}}">
+      <!-- 所有评论扁平化显示 -->
+           <view class="comment-card {{item.isAdminReply ? 'admin-reply' : ''}}" wx:for="{{comments}}" wx:key="commentId">
+             <view class="admin-badge" wx:if="{{item.isAdminReply}}">官方回复</view>
+             <view class="comment-card-header">
+               <image class="comment-card-avatar" src="{{item.userAvatar || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load />
+               <view class="comment-card-info">
+                 <text class="comment-card-nickname">{{item.userNickname || '匿名用户'}}</text>
+                 <text class="comment-card-time">{{item.createTime}}</text>
+               </view>
+             </view>
+        <view class="comment-card-content">
+          <text wx:if="{{item.replyToUserNickname}}" class="reply-prefix">回复 @{{item.replyToUserNickname}}：</text>
+          <text>{{item.content}}</text>
+        </view>
+
+        <view class="comment-card-footer">
+          <view class="footer-item" catchtap="onReplyComment" data-comment-id="{{item.commentId}}" data-user-id="{{item.userId}}" data-user-name="{{item.userNickname}}">
+            <text>回复</text>
+          </view>
+          <view class="footer-item" catchtap="onCommentVote" data-comment-id="{{item.commentId}}" data-vote-type="1">
+            <image 
+              class="footer-icon {{item.userVoteType === 1 ? 'active' : ''}}"
+              src="{{item.userVoteType === 1 ? '/images/icon-like-filled.svg' : '/images/icon-like.svg'}}"
+              mode="aspectFit"
+            />
+            <text class="{{item.userVoteType === 1 ? 'active' : ''}}">{{item.likeCount || 0}}</text>
+          </view>
+          <view class="footer-item" catchtap="onCommentVote" data-comment-id="{{item.commentId}}" data-vote-type="0">
+            <image 
+              class="footer-icon {{item.userVoteType === 0 ? 'active' : ''}}"
+              src="{{item.userVoteType === 0 ? '/images/icon-dislike-filled.svg' : '/images/icon-dislike.svg'}}"
+              mode="aspectFit"
+            />
+            <text class="{{item.userVoteType === 0 ? 'active' : ''}}">{{item.dislikeCount || 0}}</text>
+          </view>
+          <view class="footer-item more-btn" catchtap="onShowCommentMore" data-comment-id="{{item.commentId}}" data-user-id="{{item.userId}}">
+            <text></text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-comments" wx:if="{{!commentsLoading && comments.length === 0}}">
+      <view class="empty-icon"></view>
+      <text class="empty-text">暂无评论，快来抢沙发~</text>
+    </view>
+    <view class="loading-comments" wx:if="{{commentsLoading}}">
+      <text>加载中...</text>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <view class="input-box">
+      <input 
+        class="comment-input" 
+        placeholder="{{replyToUserName ? '回复 @' + replyToUserName : '写下你的评论...'}}"
+        value="{{commentContent}}"
+        bindinput="onCommentInput"
+        focus="{{showCommentInput}}"
+        confirm-type="send"
+        bindconfirm="submitComment"
+      />
+      <button 
+        class="submit-btn {{canSubmit ? 'active' : ''}}" 
+        catchtap="submitComment"
+        disabled="{{!canSubmit}}"
+      >
+        发送
+      </button>
+    </view>
+  </view>
+</view>
+
+
+</view>

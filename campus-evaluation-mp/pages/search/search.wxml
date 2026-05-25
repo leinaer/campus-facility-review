@@ -1,0 +1,108 @@
+<!--pages/search/search.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="🔍 搜索设施、位置"
+      value="{{keyword}}"
+      bindinput="onInput"
+      bindconfirm="onSearch"
+      focus="{{!hasSearched}}"
+    />
+    <view class="search-btn" bindtap="onSearch">搜索</view>
+  </view>
+
+  <!-- 未搜索时显示历史和热门 -->
+  <view wx:if="{{!hasSearched}}" class="suggest-section">
+    <!-- 搜索历史 -->
+    <view wx:if="{{searchHistory.length > 0}}" class="history-section">
+      <view class="section-header">
+        <text class="section-title">🕒 搜索历史</text>
+        <text class="clear-btn" bindtap="clearHistory">清空</text>
+      </view>
+      <view class="keyword-list">
+        <block wx:for="{{searchHistory}}" wx:key="index">
+          <view 
+            class="keyword-tag" 
+            bindtap="onHistoryTap" 
+            data-keyword="{{item}}"
+          >
+            <text>{{item}}</text>
+            <text 
+              class="delete-icon" 
+              catchtap="onDeleteHistoryItem" 
+              data-index="{{index}}"
+            >✕</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 热门搜索 -->
+    <view wx:if="{{hotKeywords.length > 0}}" class="hot-section">
+      <view class="section-header">
+        <text class="section-title">🔥 热门搜索</text>
+      </view>
+      <view class="keyword-list">
+        <block wx:for="{{hotKeywords}}" wx:key="index">
+          <view 
+            class="keyword-tag hot-tag" 
+            bindtap="onHotKeywordTap" 
+            data-keyword="{{item}}"
+          >
+            {{item}}
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{resultList.length > 0}}" class="result-section">
+    <view class="result-header">
+      <text class="result-count">找到 {{total}} 个结果</text>
+    </view>
+
+    <view class="facility-list">
+      <block wx:for="{{resultList}}" wx:key="facilityId">
+        <view
+          class="facility-item"
+          bindtap="goToDetail"
+          data-id="{{item.facilityId}}"
+        >
+          <image class="facility-cover" src="{{item.coverImage || '/images/default-icon.png'}}" mode="aspectFill" lazy-load />
+          <view class="facility-info">
+            <text class="facility-name">{{item.name}}</text>
+            <text class="facility-location">📍 {{item.location}}</text>
+            <view class="facility-meta">
+              <text class="facility-rating">⭐ {{item.rating}}</text>
+              <text class="facility-campus">{{item.campus}}</text>
+              <text class="facility-count">{{item.reviewCount}}条评价</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载更多提示 -->
+    <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMore">
+      <text>点击加载更多</text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && resultList.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:if="{{!loading && resultList.length === 0 && hasSearched}}" class="empty-state">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">没有找到相关设施</text>
+    <text class="empty-tip">换个关键词试试吧</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-state">
+    <text class="loading-text">搜索中...</text>
+  </view>
+</view>

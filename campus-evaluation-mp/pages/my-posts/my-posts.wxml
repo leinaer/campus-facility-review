@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="waterfall-container" wx:if="{{publishedPosts.length > 0}}">
+    <view class="waterfall-column">
+      <view
+        class="note-card"
+        wx:for="{{publishedPosts}}"
+        wx:key="postId"
+        wx:if="{{index % 2 === 0}}"
+      >
+        <view class="note-cover" bindtap="goToPostDetail" data-id="{{item.postId}}">
+          <image class="cover-image" src="{{item.coverImage || '/images/default-cover.svg'}}" mode="aspectFill" lazy-load />
+        </view>
+        <view class="note-content">
+          <text class="note-title">{{item.title || item.content}}</text>
+          <view class="note-footer">
+            <view class="note-stats">
+              <text class="stat-item">❤️ {{item.likeCount || 0}}</text>
+            </view>
+            <view class="note-actions">
+              <text class="action-btn" catchtap="deletePost" data-id="{{item.postId}}">删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="waterfall-column">
+      <view
+        class="note-card"
+        wx:for="{{publishedPosts}}"
+        wx:key="postId"
+        wx:if="{{index % 2 === 1}}"
+      >
+        <view class="note-cover" bindtap="goToPostDetail" data-id="{{item.postId}}">
+          <image class="cover-image" src="{{item.coverImage || '/images/default-cover.svg'}}" mode="aspectFill" lazy-load />
+        </view>
+        <view class="note-content">
+          <text class="note-title">{{item.title || item.content}}</text>
+          <view class="note-footer">
+            <view class="note-stats">
+              <text class="stat-item">❤️ {{item.likeCount || 0}}</text>
+            </view>
+            <view class="note-actions">
+              <text class="action-btn" catchtap="deletePost" data-id="{{item.postId}}">删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{publishedPosts.length === 0 && !loading}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">还没有发布过笔记</text>
+    <button class="go-publish-btn" bindtap="goToPublish">去发布</button>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="no-more" wx:if="{{!hasMore && publishedPosts.length > 0}}">
+    <text>— 到底了 —</text>
+  </view>
+</view>

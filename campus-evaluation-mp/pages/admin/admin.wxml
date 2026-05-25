@@ -1,0 +1,68 @@
+<!--pages/admin/admin.wxml-->
+<view class="admin-container">
+  <!-- 顶部用户信息 -->
+  <view class="user-header">
+    <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill" lazy-load></image>
+    <view class="user-info">
+      <text class="nickname">{{userInfo.nickname || '管理员'}}</text>
+      <text class="role-badge">👑 管理员</text>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="statistics-section">
+    <view class="stat-item">
+      <text class="stat-num">{{statistics.categoryCount || 0}}</text>
+      <text class="stat-label">分类数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{statistics.facilityCount || 0}}</text>
+      <text class="stat-label">设施数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{statistics.evaluationCount || 0}}</text>
+      <text class="stat-label">评价数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{statistics.userCount || 0}}</text>
+      <text class="stat-label">用户数</text>
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="function-section">
+    <view class="section-title">管理功能</view>
+    <view class="function-grid">
+      <view class="function-item" bindtap="goCategoryManage">
+        <view class="icon-box category-icon">📂</view>
+        <text class="function-text">分类管理</text>
+      </view>
+      <view class="function-item" bindtap="goFacilityManage">
+        <view class="icon-box facility-icon">🏫</view>
+        <text class="function-text">设施管理</text>
+      </view>
+      <view class="function-item" bindtap="goEvaluationManage">
+        <view class="icon-box evaluation-icon">💬</view>
+        <text class="function-text">评价管理</text>
+      </view>
+      <view class="function-item" bindtap="goBannerManage">
+        <view class="icon-box banner-icon">🖼️</view>
+        <text class="function-text">轮播图管理</text>
+      </view>
+      <view class="function-item" bindtap="goStatistics">
+        <view class="icon-box statistics-icon">📊</view>
+        <text class="function-text">数据统计</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 切换视角 -->
+  <view class="switch-view-section">
+    <button class="switch-btn" bindtap="switchToUserView">切换到用户视角</button>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+</view>

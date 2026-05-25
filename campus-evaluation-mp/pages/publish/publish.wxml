@@ -1,0 +1,192 @@
+<view class="container">
+  <!-- 心情选择 -->
+  <view class="section">
+    <view class="section-title">心情</view>
+    <view class="mood-grid">
+      <view
+        wx:for="{{moods}}"
+        wx:key="key"
+        class="mood-item {{mood === item.key ? 'active' : ''}}"
+        bindtap="onMoodSelect"
+        data-mood="{{item.key}}"
+      >
+        <view class="mood-emoji">{{item.icon}}</view>
+        <text class="mood-text">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标题输入 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="required-mark">*</text>
+      标题
+    </view>
+    <view class="input-wrapper">
+      <input
+        class="title-input"
+        placeholder="给帖子起个标题吧（必填）"
+        placeholder-class="placeholder"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="50"
+      />
+      <text class="input-count {{title.length > 0 ? 'has-text' : ''}}">{{title.length}}/50</text>
+    </view>
+  </view>
+
+  <!-- 内容输入 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="required-mark">*</text>
+      内容
+    </view>
+    <view class="textarea-wrapper">
+      <textarea
+        class="content-textarea"
+        placeholder="分享你的校园生活...（必填）"
+        placeholder-class="placeholder"
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="1000"
+      />
+      <text class="textarea-count {{content.length > 0 ? 'has-text' : ''}}">{{content.length}}/1000</text>
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="required-mark">*</text>
+      图片 <text class="image-tip">（{{images.length}}/9，至少1张）</text>
+    </view>
+    <view class="image-grid">
+      <view
+        wx:for="{{images}}"
+        wx:key="*this"
+        class="image-item"
+      >
+        <image class="image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}" />
+        <view class="image-mask" bindtap="deleteImage" data-index="{{index}}">
+          <text class="delete-icon">×</text>
+        </view>
+      </view>
+      <view
+        wx:if="{{images.length < 9}}"
+        class="upload-btn"
+        bindtap="chooseImages"
+      >
+        <text class="upload-plus">+</text>
+        <text class="upload-text">添加图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 封面选择 -->
+  <view wx:if="{{showCoverSelector}}" class="section">
+    <view class="section-title">选择封面</view>
+    <view class="cover-list">
+      <view
+        wx:for="{{images}}"
+        wx:key="*this"
+        class="cover-item {{coverIndex === index ? 'active' : ''}}"
+        bindtap="selectCover"
+        data-index="{{index}}"
+      >
+        <image class="cover-image" src="{{item}}" mode="aspectFill" />
+        <view wx:if="{{coverIndex === index}}" class="cover-badge">封面</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标签选择 -->
+  <view class="section" wx:if="{{popularTags.length > 0 || showActivityTags}}">
+    <view class="section-title">标签 <text class="tag-tip">（{{tags.length}}/{{maxTags}}，可选）</text></view>
+
+    <!-- 活动标签 -->
+    <view wx:if="{{showActivityTags}}" class="tag-group">
+      <text class="tag-group-title">🎉 活动标签</text>
+      <view class="tag-list">
+        <view
+          wx:for="{{activityTags}}"
+          wx:key="tagId"
+          class="tag-item {{tags.includes(item.tagName) ? 'active' : ''}}"
+          bindtap="onActivityTagSelect"
+          data-tag="{{item.tagName}}"
+        >
+          <text class="tag-icon">{{item.icon || '🏷️'}}</text>
+          <text>{{item.tagName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门标签 -->
+    <view wx:if="{{popularTags.length > 0}}" class="tag-group">
+      <text class="tag-group-title">🔥 热门标签</text>
+      <view class="tag-list">
+        <view
+          wx:for="{{popularTags}}"
+          wx:key="*this"
+          class="tag-item {{tags.includes(item) ? 'active' : ''}}"
+          bindtap="onTagSelect"
+          data-tag="{{item}}"
+        >
+          <text>{{item}}</text>
+        </view>
+        <view class="tag-item add-tag-btn" bindtap="addCustomTag">
+          <text>+</text>
+          <text>自定义</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 已选标签 -->
+    <view wx:if="{{tags.length > 0}}" class="selected-tags">
+      <text class="selected-title">已选：</text>
+      <view
+        wx:for="{{tags}}"
+        wx:key="*this"
+        class="selected-tag"
+      >
+        <text>{{item}}</text>
+        <text class="delete-tag" bindtap="deleteTag" data-tag="{{item}}">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 话题选择 -->
+  <view class="section">
+    <view class="section-title">选择话题（可选）</view>
+    <view class="topic-tags">
+      <view
+        wx:for="{{availableTopics}}"
+        wx:key="topicId"
+        class="topic-tag {{selectedTopic && selectedTopic.topicId === item.topicId ? 'active' : ''}}"
+        bindtap="onSelectTopic"
+        data-topic="{{item}}"
+      >
+        <text class="topic-tag-icon">{{item.icon || '🏷️'}}</text>
+        <text class="topic-tag-text">{{item.name}}</text>
+      </view>
+      <view class="topic-tag add-tag" bindtap="onAddTopic">
+        <text class="add-symbol">+</text>
+        <text>查看全部</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="submit-section">
+    <button
+      class="submit-btn {{canSubmit ? 'active' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{!canSubmit}}"
+      loading="{{isSubmitting}}"
+    >
+      {{isSubmitting ? '发布中...' : '发布'}}
+    </button>
+    <text wx:if="{{uploadProgress > 0 && uploadProgress < 100}}" class="upload-progress">
+      上传中 {{uploadProgress}}%
+    </text>
+  </view>
+</view>

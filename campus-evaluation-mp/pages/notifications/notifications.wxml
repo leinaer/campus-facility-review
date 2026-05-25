@@ -1,0 +1,49 @@
+<!-- pages/notifications/notifications.wxml -->
+<view class="notifications-page">
+  <view class="header">
+    <text class="title">消息通知</text>
+    <view class="actions">
+      <text class="mark-all" bindtap="markAllAsRead" wx:if="{{unreadCount > 0}}">全部已读</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="content" bindscrolltolower="loadMore">
+    <view class="notification-list">
+      <view 
+        class="notification-item {{item.isRead === 0 ? 'unread' : ''}}"
+        wx:for="{{notifications}}"
+        wx:key="notificationId"
+        bindtap="onNotificationTap"
+        data-id="{{item.notificationId}}"
+        data-type="{{item.type}}"
+        data-related-id="{{item.relatedId}}"
+        data-related-type="{{item.relatedType}}"
+      >
+        <view class="notif-icon">{{getIconByType(item.type)}}</view>
+        <view class="notif-content">
+          <view class="notif-header">
+            <text class="notif-title">{{item.title}}</text>
+            <text class="notif-time">{{formatTime(item.createTime)}}</text>
+          </view>
+          <text class="notif-text">{{item.content}}</text>
+        </view>
+        <view class="notif-actions">
+          <text class="delete-btn" catchtap="deleteNotification" data-id="{{item.notificationId}}">×</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="loading-more" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+
+    <view class="no-more" wx:if="{{!hasMore && notifications.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+
+    <view class="empty-state" wx:if="{{notifications.length === 0 && !loading}}">
+      <text class="empty-icon">🔔</text>
+      <text class="empty-text">暂无消息通知</text>
+    </view>
+  </scroll-view>
+</view>
